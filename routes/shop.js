@@ -1,8 +1,8 @@
 
 
 const express = require('express');
-const shopController = require('../controller/shop')
-const adminData = require('./admin');
+const shopController = require('../controllers/shop')
+
 
 const router = express.Router();
 

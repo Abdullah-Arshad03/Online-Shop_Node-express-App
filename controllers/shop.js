@@ -2,34 +2,44 @@ const Product = require('../models/product');
 const Cart = require('../models/cart');
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll(products => {
+  Product.fetchAll().then(([rowData])=>{
     res.render('shop/product-list', {
-      prods: products,
+      prods: rowData,
       pageTitle: 'All Products',
       path: '/products'
     });
-  });
-};
+  }).catch((err)=>{
+    console.log('data isnt fetched', err)
+  }) 
+  };
 
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
-  Product.findById(prodId, product => {
+  Product.findById(prodId).then(([data])=>{
+    console.log(data)
     res.render('shop/product-detail', {
-      product: product,
-      pageTitle: product.title,
+
+      product: data[0],
+      pageTitle: data[0].title,
       path: '/products'
     });
-  });
-};
+  }).catch((err)=>{
+           console.log(err)
+  })
+    
+}
 
 exports.getIndex = (req, res, next) => {
-  Product.fetchAll(products => {
+  Product.fetchAll().then(([dataRow , feildData])=>{
     res.render('shop/index', {
-      prods: products,
+      prods: dataRow,
       pageTitle: 'Shop',
       path: '/'
     });
-  });
+  }).catch((reject)=>{
+    console.log('The data isnt fetched', reject)
+  })
+
 };
 
 exports.getCart = (req, res, next) => {
