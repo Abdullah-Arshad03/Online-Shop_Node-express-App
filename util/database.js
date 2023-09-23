@@ -4,10 +4,10 @@ const MongoClient = mongodb.MongoClient;
 let _db;
 
 const mongoConnect = (callback) => {
-  MongoClient.connect('mongodb://localhost:27017/shop')
+  MongoClient.connect('mongodb://127.0.0.1:27017/shop') 
     .then((client) => {
       console.log('Connected to MongoDB!');
-      _db = client.db('shop'); // Specify the name of your local database here
+      _db = client.db(''); // Specify the name of your local database here
       callback();
     })
     .catch((err) => {
