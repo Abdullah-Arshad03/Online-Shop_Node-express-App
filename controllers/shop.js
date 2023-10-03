@@ -44,21 +44,37 @@ exports.getIndex = (req, res, next) => {
 
 
 exports.getCart = (req,res,next) => {
-  req.user.getCart().then((products)=>{
-    console.log('get cart mai products hain ' , products)
+  req.user.populate('cart.items.productId')
+  .then((product)=>{
+    console.log('get cart mai products hain ' , product.cart.items)
+    let products = product.cart.items
+
+    console.log('this is the another console',products)
     res.render('shop/cart' , {
       path : '/cart',
       pageTitle : 'Your Cart' ,
       products : products
     })
   })
+  
+  
+  
+  
+  
+  // .getCart().then((products)=>{
+  //   console.log('get cart mai products hain ' , products)
+  //   res.render('shop/cart' , {
+  //     path : '/cart',
+  //     pageTitle : 'Your Cart' ,
+  //     products : products
+  //   })
+  // })
 
 }
 
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
   Product.findById(prodId).then((product)=>{
-    console.log('this is the prorduct in uper wala post cart controller', product)
       return req.user.addToCart(product)
   }).then((result)=>{
     // res.redirect('/cart')
