@@ -2,7 +2,7 @@ const Product = require("../models/product");
 // const Cart = require("../models/cart");
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll().then((product) => {
+  Product.find().then((product) => {
       res.render("shop/product-list", {
         prods: product,
         pageTitle: "All Products",
@@ -29,7 +29,7 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-  Product.fetchAll().then((product) => {
+  Product.find().then((product) => {
     console.log("this is the products" , product)
       res.render("shop/index", {
         prods: product,
