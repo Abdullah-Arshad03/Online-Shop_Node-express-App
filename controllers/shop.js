@@ -1,5 +1,7 @@
 const Product = require("../models/product");
 // const Cart = require("../models/cart");
+const Order = require('../models/order')
+
 
 exports.getProducts = (req, res, next) => {
   Product.find().then((product) => {
@@ -77,7 +79,7 @@ exports.postCart = (req, res, next) => {
   Product.findById(prodId).then((product)=>{
       return req.user.addToCart(product)
   }).then((result)=>{
-    // res.redirect('/cart')
+    res.redirect('/cart')
     console.log('post cart result', result)
   }).catch((err)=>{
     console.log('error in the post cart' , err)
@@ -85,22 +87,38 @@ exports.postCart = (req, res, next) => {
 };
 
 exports.postCartDeleteProduct = (req, res, next) => {
-
   const prodId = req.body.productId;
   console.log('im in the post cart delete product route !!')
-  req.user.deleteItemFromCart(prodId).then((deleted)=>{
-    console.log('it is deleted', deleted)
-    res.redirect('/cart')
+  req.user.removeFromCart(prodId).then((deleted)=>{
+   
+    res.redirect('/')
   })
 };
 
 
 exports.postOrder = (req, res , next ) => {
-        req.user.addOrder().then((result)=>{
-          res.redirect('/orders');
-        }).catch(err =>{
-          console.log(err)
-        })
+  req.user.populate('cart.items.productId')
+  .then((product)=>{
+    console.log('get cart mai products hain ' , product.cart.items)
+    let products = product.cart.items.map (i => {
+      return { quantity : i.quantity , product : {...i.productId._doc}  }
+    })
+
+    const order = new Order({
+         user : {
+          name : req.user.name,
+          userId : req.user
+         },
+         Products : products 
+    })
+
+    return order.save()
+  }).then((result)=>{
+    res.redirect('/orders')
+  }).catch((err)=>{
+    console.log(err)
+  })
+        
 
 }
 // exports.getOrders = (req, res, next) => {
