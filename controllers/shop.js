@@ -58,19 +58,6 @@ exports.getCart = (req,res,next) => {
       products : products
     })
   })
-  
-  
-  
-  
-  
-  // .getCart().then((products)=>{
-  //   console.log('get cart mai products hain ' , products)
-  //   res.render('shop/cart' , {
-  //     path : '/cart',
-  //     pageTitle : 'Your Cart' ,
-  //     products : products
-  //   })
-  // })
 
 }
 
@@ -103,7 +90,6 @@ exports.postOrder = (req, res , next ) => {
     let products = product.cart.items.map (i => {
       return { quantity : i.quantity , product : {...i.productId._doc}  }
     })
-
     const order = new Order({
          user : {
           name : req.user.name,
@@ -114,19 +100,24 @@ exports.postOrder = (req, res , next ) => {
 
     return order.save()
   }).then((result)=>{
+    return req.user.clearCart()
+  }).then(()=>{
     res.redirect('/orders')
   }).catch((err)=>{
     console.log(err)
   })
-        
+    
 
 }
-// exports.getOrders = (req, res, next) => {
-//   res.render("shop/orders", {
-//     path: "/orders",
-//     pageTitle: "Your Orders",
-//   });
-// };
+exports.getOrders = (req, res, next) => {
+  Order.find({ 'user.userId' : req.user._id}).then((orders)=>{
+    res.render("shop/orders", {
+      path: "/orders",
+      pageTitle: "Your Orders",
+      orders : orders
+    });
+  })
+};
 
 // exports.getCheckout = (req, res, next) => {
 //   res.render("shop/checkout", {

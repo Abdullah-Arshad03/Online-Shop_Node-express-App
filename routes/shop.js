@@ -17,7 +17,7 @@ router.get ('/products/:productId' , shopController.getProduct)
 
 router.get ('/products' , shopController.getProducts)
 
-// // router.get('/orders', shopController.getOrders)
+router.get('/orders', shopController.getOrders)
 
 router.post('/create-order', shopController.postOrder)
  
