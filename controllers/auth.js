@@ -13,7 +13,7 @@ exports.getLogin = (req ,res , next) =>{
 exports.postLogin = (req ,res , next) =>{
 
 //  res.setHeader('Set-Cookie' , 'loggedIn=true ; ') 
-User.findById('6523c17fea6dad73ee62dbdf').then((user)=>{
+User.findById('65339cd3ade92730baae5a24').then((user)=>{
   req.session.isLoggedIn = true
   req.session.user = user
   res.redirect('/')
@@ -22,3 +22,8 @@ User.findById('6523c17fea6dad73ee62dbdf').then((user)=>{
 })
 }
 
+exports.postLogout = ( req , res , next ) =>{
+  req.session.destroy((err)=>{
+    res.redirect('/')
+  })
+}

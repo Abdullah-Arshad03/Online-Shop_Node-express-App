@@ -31,6 +31,24 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({secret : 'my secret' , resave : false , saveUninitialized : false , store : store }))
 
+// const user_Id = req.session.user._id.toString()
+
+app.use((req,res,next)=>{
+  if(!req.session.user){
+    return next()
+  }
+
+  const user_id = req.session.user._id.toString()
+  User.findById(user_id).then((user)=>{
+    // console.log('app mai session dekh raha houn', user_id)
+    req.user = user
+    next();
+  }).catch((err)=>{
+    console.log("this is the error",err)
+  })
+
+})
+
 
 
 app.use('/admin', adminRoutes);
