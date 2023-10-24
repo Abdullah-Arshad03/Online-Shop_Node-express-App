@@ -16,7 +16,9 @@ exports.postLogin = (req ,res , next) =>{
 User.findById('65339cd3ade92730baae5a24').then((user)=>{
   req.session.isLoggedIn = true
   req.session.user = user
-  res.redirect('/')
+  res.session.save((err)=>{
+    res.redirect('/')
+  })
 }).catch((err)=>{
   console.log("User isn't exist right now ",err)
 })
@@ -26,4 +28,15 @@ exports.postLogout = ( req , res , next ) =>{
   req.session.destroy((err)=>{
     res.redirect('/')
   })
+}
+
+exports.getSignup = (req,res,next) =>{
+  res.render('auth/signup', {
+    pageTitle : "signup",
+    path : 'signup',
+    isAuthenticated : false
+  })
+}
+exports.postSignup = (req,res,next)=>{
+  
 }
