@@ -60,19 +60,7 @@ app.use(errorController.get404);
 mongoose
   .connect('mongodb://127.0.0.1:27017/shop')
   .then(() => {
-    console.log('connected using the Mongoose!!')
-    User.findOne().then((user)=>{
-      if (!user){
-      const user = new User ({
-        name : 'Abdullah Bin Arshad',
-        email : 'abdullah@gmail.com',
-        cart : {
-          items : []
-        }
-      })
-      user.save()
-    }
-    })
+    console.log('connected using the Mongoose!!')  
     app.listen(3000);
   })
   .catch((err) => {
