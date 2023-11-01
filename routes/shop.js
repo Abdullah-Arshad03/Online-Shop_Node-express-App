@@ -19,7 +19,7 @@ router.get ('/products' , shopController.getProducts)
 
 router.get('/orders', isAuth , shopController.getOrders)
 
-router.post('/create-order', isAuth,shopController.postOrder)
+router.post('/create-order', isAuth , shopController.postOrder)
  
 router.post('/cart-delete-item' , isAuth ,shopController.postCartDeleteProduct)
 
