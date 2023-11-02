@@ -1,5 +1,14 @@
 const bcrypt = require("bcryptjs");
+const nodemailer = require('nodemailer')
+const sendgridTransport = require('nodemailer-sendgrid-transport')
 const User = require("../models/user");
+
+
+const transporter = nodemailer.createTransport(sendgridTransport({
+  auth:{
+ api_key : "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"
+  }
+}))
 
 exports.getLogin = (req, res, next) => {
   // const isLoggedIn = req.get('Cookie').split('=')[1]
@@ -88,8 +97,14 @@ exports.postSignup = (req, res, next) => {
           return user.save();
         })
         .then(() => {
-          return res.redirect("/login");
-        });
+          res.redirect("/login");
+         return transporter.sendMail({
+            to : email,
+            from : 'aligatorabdullah@gmail.com',
+            subject : 'Signup Succeeded!',
+            html :'<h1> You Successfully Signed Up </h1><br><h4> Regards, <h4<h3> Abdullah Bin Arshad </h3>'
+          })
+        }).catch(err =>{console.log(err)})
     })
     .catch((err) => {
       console.log("user isnt set ", err);
