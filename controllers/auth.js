@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const nodemailer = require('nodemailer')
 const sendgridTransport = require('nodemailer-sendgrid-transport')
+const crypto = require('crypto')
 const User = require("../models/user");
 
 
@@ -110,3 +111,54 @@ exports.postSignup = (req, res, next) => {
       console.log("user isnt set ", err);
     });
 };
+
+exports.getReset = (req, res, next) => {
+
+  let message = req.flash('error')
+  if(message.length > 0){
+    message = message[0]
+  }else{
+    message = null
+  }
+  res.render("auth/reset", {
+    pageTitle: "Reset",
+    path: "/login",
+    errorMessage : message
+  });
+};
+exports.postReset = (req,res,next)=>{
+  const email = req.body.email
+      crypto.randomBytes(32, (err , buffer)=>{
+        if(err){
+          console.log(err)
+          return res.redirect('/reset')
+        }
+        User.findOne({ email : req.body.email}).then((user)=>{
+          if(!user){
+            req.flash('error', 'The email you enterd isnt registered in Database !')
+            return res.redirect('/reset')
+          }
+          const token = buffer.toString('hex')
+          user.resetToken = token
+          user.resetTokenExpiration = Date.now() + 3600000
+          return user.save()
+        }).then((result)=>{
+             res.redirect('/')
+             transporter.sendMail({
+              to : email,
+              from : 'aligatorabdullah@gmail.com',
+              subject : 'Password Reset Mail',
+              html : `
+              <p>You requested a password Reset!</p>
+              <p> Click this link to set a new password</p>
+              `
+             }).then((send)=>{
+              console.log('mail has been sent', send)
+
+             }).catch(err => console.log('mail hasnt been sent'))
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      })
+}
