@@ -87,8 +87,7 @@ exports.postSignup = (req, res, next) => {
         req.flash('error' , 'Email Exists Already, Please Pick A Different One')
         return res.redirect("/signup");
       }
-      return bcrypt
-        .hash(password, 12)
+      return bcrypt.hash(password, 12)
         .then((hashedPassword) => {
           const user = new User({
             email: email,
@@ -126,6 +125,7 @@ exports.getReset = (req, res, next) => {
     errorMessage : message
   });
 };
+
 exports.postReset = (req,res,next)=>{
   const email = req.body.email
       crypto.randomBytes(32, (err , buffer)=>{
@@ -139,7 +139,7 @@ exports.postReset = (req,res,next)=>{
             return res.redirect('/reset')
           }
           const token = buffer.toString('hex')
-          user.resetToken = token
+          user.resetToken = token 
           user.resetTokenExpiration = Date.now() + 3600000
           return user.save()
         }).then((result)=>{
@@ -150,7 +150,8 @@ exports.postReset = (req,res,next)=>{
               subject : 'Password Reset Mail',
               html : `
               <p>You requested a password Reset!</p>
-              <p> Click this link to set a new password</p>
+              <p> Click the below link to set  new password</p>
+              <a href="http://localhost:3000/reset/${result.resetToken}">click here</a>
               `
              }).then((send)=>{
               console.log('mail has been sent', send)
@@ -159,6 +160,7 @@ exports.postReset = (req,res,next)=>{
         })
         .catch(err => {
           console.log(err)
+
         })
       })
 }
