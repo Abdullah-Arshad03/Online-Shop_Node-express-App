@@ -146,29 +146,29 @@ exports.postReset = (req, res, next) => {
           );
           return res.redirect("/reset");
         }
-        const token = buffer.toString("hex");
-        user.resetToken = token;
+        let token = buffer.toString("hex");
+        user.resetToken = token ;
         user.resetTokenExpiration = Date.now() + 3600000;
-        return user.save();
+        return user.save().then((result) => {
+          res.redirect("/");
+          transporter
+            .sendMail({
+              to: email,
+              from: "aligatorabdullah@gmail.com",
+              subject: "Password Reset Mail",
+              html: `
+                <p>You requested a password Reset!</p>
+                <p> Click the below link to set  new password</p>
+                <a href="http://localhost:3000/reset/${token}">click here</a>
+                `,
+            })
+            .then((send) => {
+              console.log("mail has been sent", send);
+            })
+            .catch((err) => console.log("mail hasnt been sent"));
+        });
       })
-      .then((result) => {
-        res.redirect("/");
-        transporter
-          .sendMail({
-            to: email,
-            from: "aligatorabdullah@gmail.com",
-            subject: "Password Reset Mail",
-            html: `
-              <p>You requested a password Reset!</p>
-              <p> Click the below link to set  new password</p>
-              <a href="http://localhost:3000/reset/${result.resetToken}">click here</a>
-              `,
-          })
-          .then((send) => {
-            console.log("mail has been sent", send);
-          })
-          .catch((err) => console.log("mail hasnt been sent"));
-      })
+    
       .catch((err) => {
         console.log(err);
       });
