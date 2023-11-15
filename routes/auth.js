@@ -24,7 +24,7 @@ router.post(
         return res.redirect("/signup");
       }
     })
-    
+
     }),
 
   check(
