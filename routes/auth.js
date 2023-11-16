@@ -28,7 +28,7 @@ router.post(
   check(
     "password",
     "Please enter a password with only numbers and text and should contain atleast 5 characters!"
-  ).isLength({min:5}).isAlphanumeric(),
+  ).notEmpty().isLength({min:5}).isAlphanumeric(),
 
   check('confirmPassword').custom((value, {req})=>{
     if(value !== req.body.password){
@@ -52,7 +52,7 @@ router.post("/login", [
      return true
     })
   }),
-  check('password', 'Please Enter Password').notEmpty()
+  check('password', 'Please Enter Password').notEmpty().isLength({min:5}).isAlphanumeric()
 ], authController.postLogin);
 router.post("/logout", authController.postLogout);
 router.post("/reset", authController.postReset);

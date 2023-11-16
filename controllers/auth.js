@@ -27,7 +27,12 @@ exports.getLogin = (req, res, next) => {
     pageTitle: "Login",
     path: "/login",
     errorMessage: message,
+    oldInput :{
+      email : '' ,
+      password : ''
+    }
   });
+
 };
 
 exports.postLogin = (req, res, next) => {
@@ -40,6 +45,10 @@ exports.postLogin = (req, res, next) => {
       pageTitle: "Login",
       path: "/login",
       errorMessage: errors.array()[0].msg,
+      oldInput : {
+        email : email , 
+        password : password
+      }
     });
   }
       bcrypt
@@ -76,6 +85,12 @@ exports.getSignup = (req, res, next) => {
     pageTitle: "signup",
     path: "signup",
     errorMessage: message,
+    oldInput : {
+      email :  '',
+      password : '' ,
+      confirmPassword : ''
+    },
+    validationErrors : []
   });
 };
 
@@ -84,11 +99,19 @@ exports.postSignup = (req, res, next) => {
   const password = req.body.password;
   const confirmPassword = req.body.confirmPassword;
   let errors = validationResult(req);
+  console.log(errors)
   if (!errors.isEmpty()) {
     return res.status(422).render("auth/signup", {
       pageTitle: "signup",
       path: "signup",
       errorMessage: errors.array()[0].msg,
+      oldInput : {
+        email : email ,
+        password : password ,
+        confirmPassword : confirmPassword
+      },
+      validationErrors : errors.array()
+
     });
   }
 
