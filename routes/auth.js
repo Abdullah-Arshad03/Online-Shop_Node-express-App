@@ -6,6 +6,7 @@ const User = require('../models/user')
 
 
 router.get("/login", authController.getLogin);
+
 router.get("/signup", authController.getSignup);
 router.get("/reset", authController.getReset);
 router.get("/reset/:token", authController.getNewPassword);
@@ -41,7 +42,18 @@ router.post(
 ],
   authController.postSignup
 );
-router.post("/login", authController.postLogin);
+router.post("/login", [
+  check('email', 'Please Enter a valid Email Address to login').isEmail().custom((value , {req})=>{
+    return User.findOne({email : value}).then((userDoc)=>{
+      if(!userDoc){
+        return Promise.reject('User isnt Signed Up, Make sure to sign up')
+      }
+     req.userDoc = userDoc
+     return true
+    })
+  }),
+  check('password', 'Please Enter Password').notEmpty()
+], authController.postLogin);
 router.post("/logout", authController.postLogout);
 router.post("/reset", authController.postReset);
 router.post("/new-password", authController.postNewPassword);
