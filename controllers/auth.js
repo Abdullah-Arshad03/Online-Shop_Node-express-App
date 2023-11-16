@@ -94,12 +94,7 @@ exports.postSignup = (req, res, next) => {
     })
     
   }
-  User.findOne({ email: email })
-    .then((userDoc) => {
-      if (userDoc) {
-        req.flash("error", "Email Exists Already, Please Pick A Different One");
-        return res.redirect("/signup");
-      }
+
       return bcrypt
         .hash(password, 12)
         .then((hashedPassword) => {
@@ -122,10 +117,6 @@ exports.postSignup = (req, res, next) => {
         .catch((err) => {
           console.log(err);
         });
-    })
-    .catch((err) => {
-      console.log("user isnt set ", err);
-    });
 };
 
 exports.getReset = (req, res, next) => {

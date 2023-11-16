@@ -16,15 +16,12 @@ router.post(
     .isEmail()
     .withMessage("Please Enter a Valid Email")
     .custom((value, { req }) => {
-     
-      User.findOne({ email: email })
+     return User.findOne({ email: value })
     .then((userDoc) => {
       if (userDoc) {
-        req.flash("error", "Email Exists Already, Please Pick A Different One");
-        return res.redirect("/signup");
+        return Promise.reject('Email Exists Already, Please Pick A Different One')
       }
     })
-
     }),
 
   check(
