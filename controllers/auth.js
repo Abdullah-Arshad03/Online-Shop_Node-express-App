@@ -30,7 +30,8 @@ exports.getLogin = (req, res, next) => {
     oldInput :{
       email : '' ,
       password : ''
-    }
+    },
+    validationErrors : []
   });
 
 };
@@ -40,6 +41,7 @@ exports.postLogin = (req, res, next) => {
   const password = req.body.password;
   console.log('user Doc store ho raha hy yahan post login mai',req.userDoc)
   let errors = validationResult(req)
+  console.log('post login mai houn',errors.array())
   if(!errors.isEmpty()){
     return res.status(422).render("auth/login.ejs", {
       pageTitle: "Login",
@@ -48,7 +50,8 @@ exports.postLogin = (req, res, next) => {
       oldInput : {
         email : email , 
         password : password
-      }
+      },
+      validationErrors : errors.array()
     });
   }
       bcrypt
@@ -59,14 +62,21 @@ exports.postLogin = (req, res, next) => {
             req.session.user = req.userDoc;
             res.redirect("/");
           }
-          req.flash("error", "Invalid Email or Password ");
-          res.redirect("/login");
+         
+          return res.status(422).render("auth/login.ejs", {
+            pageTitle: "Login",
+            path: "/login",
+            errorMessage: 'Invalid Email or Password ',
+            oldInput : {
+              email : email , 
+              password : password
+            },
+            validationErrors : []
+          });
         })
         .catch((err) => {
           console.log("error in the comparing passwords in bcrypt", err);
         });
-  
-  //  res.setHeader('Set-Cookie' , 'loggedIn=true ; ')
 };
 exports.postLogout = (req, res, next) => {
   req.session.destroy((err) => {

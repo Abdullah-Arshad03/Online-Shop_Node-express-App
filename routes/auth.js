@@ -52,7 +52,7 @@ router.post("/login", [
      return true
     })
   }),
-  check('password', 'Please Enter Password').notEmpty().isLength({min:5}).isAlphanumeric()
+  check('password','Please Enter Valid password').notEmpty().isLength({min:5})
 ], authController.postLogin);
 router.post("/logout", authController.postLogout);
 router.post("/reset", authController.postReset);
