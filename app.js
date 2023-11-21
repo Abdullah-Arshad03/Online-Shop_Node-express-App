@@ -9,6 +9,7 @@ const MongoDBStore = require("connect-mongodb-session")(session);
 const csurf = require("csurf");
 const flash = require('connect-flash')
 
+
 const errorController = require("./controllers/404");
 
 const app = express();
@@ -29,6 +30,7 @@ const authRoutes = require("./routes/auth");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+
 app.use(
   session({
     secret: "my secret",

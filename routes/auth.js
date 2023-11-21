@@ -23,12 +23,12 @@ router.post(
         return Promise.reject('Email Exists Already, Please Pick A Different One')
       }
     })
-    }),
+    }).normalizeEmail(),
 
   check(
     "password",
     "Please enter a password with only numbers and text and should contain atleast 5 characters!"
-  ).notEmpty().isLength({min:5}).isAlphanumeric(),
+  ).notEmpty().isLength({min:5}).isAlphanumeric().trim(),
 
   check('confirmPassword').custom((value, {req})=>{
     if(value !== req.body.password){
@@ -37,13 +37,13 @@ router.post(
     return true
 
     
-  } )
+  } ).trim()
 
 ],
   authController.postSignup
 );
 router.post("/login", [
-  check('email', 'Please Enter a valid Email Address to login').isEmail().custom((value , {req})=>{
+  check('email', 'Please Enter a valid Email Address to login').isEmail().normalizeEmail().custom((value , {req})=>{
     return User.findOne({email : value}).then((userDoc)=>{
       if(!userDoc){
         return Promise.reject('User isnt Signed Up, Make sure to sign up')
@@ -52,7 +52,7 @@ router.post("/login", [
      return true
     })
   }),
-  check('password','Please Enter Valid password').notEmpty().isLength({min:5})
+  check('password','Please Enter Valid password').notEmpty().isLength({min:5}).trim()
 ], authController.postLogin);
 router.post("/logout", authController.postLogout);
 router.post("/reset", authController.postReset);

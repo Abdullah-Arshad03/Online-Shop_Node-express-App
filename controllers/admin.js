@@ -1,14 +1,14 @@
 const Product = require("../models/product");
 const mongodb = require("mongodb");
+const {validationResult} = require('express-validator')
 
 exports.getAddProduct = (req, res, next) => {
-  if(!req.session.isLoggedIn){
-    return res.redirect('/login')
-  }
   res.render("admin/edit-product", {
     pageTitle: "Add Product",
     path: "/admin/add-product",
-    editing: false
+    editing: false,
+    errorMessage : '', 
+    hasError : false
   });
 };
 
@@ -17,6 +17,27 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
+  const errors = validationResult(req)
+
+
+  if(!errors.isEmpty()){
+        console.log('in post addproduct clicked')
+       return  res.status(422).render("admin/edit-product", {
+        pageTitle: "Add Product",
+        path: "/admin/add-product",
+        editing: false,
+        hasError : true,
+        product: {
+          title : title,
+          imageUrl : imageUrl,
+          price : price,
+          description : description
+        },
+        errorMessage : errors.array()[0].msg
+      });
+
+  }
+
   const product = new Product({
     title: title,
     price: price,
@@ -33,27 +54,37 @@ exports.postAddProduct = (req, res, next) => {
     .catch((err) => {
       console.log("Products isnt created", err);
     });
+  
 };
 
 exports.getEditProduct = (req, res, next) => {
   const editMode = req.query.edit;
-  
+  console.log('IN GET EDIT PRODUCT')
+
   if (!editMode) {
     return res.redirect("/");
   }
-  console.log("this is the edit mode", editMode);
+
   const prodId = req.params.productId;
+
   Product.findById(prodId)
     .then((product) => {
-      res.render("admin/edit-product", {
+      return res.render("admin/edit-product", {
         pageTitle: "Edit Product",
         path: "/admin/edit-product",
         editing: editMode,
-        product: product
+        hasError: false,
+        product: product,
+        // errorMessage: null
       });
     })
     .catch((err) => {
+      // Handle other errors (e.g., database connection issues)
       console.log(err);
+      res.status(500).render("500", {
+        pageTitle: "Internal Server Error",
+        path: "/500",
+      });
     });
 };
 
@@ -63,6 +94,27 @@ exports.postEditProduct = (req, res, next) => {
   const updatedPrice = req.body.price;
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
+
+  const errors = validationResult(req)
+
+  // if(!errors.isEmpty()){
+  //   console.log('in post edit')
+  //   return res.status(422).render("admin/edit-product", {
+  //     pageTitle: "Add Product",
+  //     path: "/admin/edit-product",
+  //     editing: true,
+  //     hasError : true,
+  //     product: {
+  //       title : updatedTitle ,
+  //       imageUrl : updatedImageUrl,
+  //       price  : updatedPrice,
+  //       description : updatedDesc
+  //     },
+  //     errorMessage : errors.array()[0].msg
+  //   });
+  // }
+
+  
   Product.findOne({_id : prodId , userId: req.user._id})
     .then((product) => {
       product.title = updatedTitle;
