@@ -1,8 +1,10 @@
 const Product = require("../models/product");
 const mongodb = require("mongodb");
+const mongoose = require('mongoose')
 const {validationResult} = require('express-validator')
 
 exports.getAddProduct = (req, res, next) => {
+  
   res.render("admin/edit-product", {
     pageTitle: "Add Product",
     path: "/admin/add-product",
@@ -15,7 +17,7 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
+  const imageUrl = req.body.image;
   const price = req.body.price;
   const description = req.body.description;
   const errors = validationResult(req)
@@ -29,6 +31,7 @@ exports.postAddProduct = (req, res, next) => {
         editing: false,
         hasError : true,
         product: {
+         
           title : title,
           imageUrl : imageUrl,
           price : price,
@@ -42,6 +45,7 @@ exports.postAddProduct = (req, res, next) => {
   }
 
   const product = new Product({
+    _id : new mongoose.Types.ObjectId('6558a8b489a8b427c60d9a3a'),
     title: title,
     price: price,
     description: description,
@@ -55,7 +59,9 @@ exports.postAddProduct = (req, res, next) => {
       res.redirect("/admin/products");
     })
     .catch((err) => {
-      console.log("Products isnt created", err);
+      const error = new Error (err)
+      error.httpStatusCode = 500
+      return next(error)
     });
   
 };
@@ -84,12 +90,9 @@ exports.getEditProduct = (req, res, next) => {
       });
     })
     .catch((err) => {
-      // Handle other errors (e.g., database connection issues)
-      console.log(err);
-      res.status(500).render("500", {
-        pageTitle: "Internal Server Error",
-        path: "/500",
-      });
+      const error = new Error (err)
+      error.httpStatusCode = 500
+      return next(error)
     });
 };
 
@@ -135,8 +138,9 @@ exports.postEditProduct = (req, res, next) => {
       res.redirect("/admin/products");
     })
     .catch((err) => {
-      console.log("product isnt updated", err);
-      return res.redirect('/')
+      const error = new Error (err)
+      error.httpStatusCode = 500
+      return next(error)
     });
 };
 
@@ -167,6 +171,8 @@ exports.postDeleteProduct = (req, res, next) => {
       res.redirect("/");
     })
     .catch((err) => {
-      console.log("product is not deleted", err);
+      const error = new Error (err)
+      error.httpStatusCode = 500
+      return next(error)
     });
 };

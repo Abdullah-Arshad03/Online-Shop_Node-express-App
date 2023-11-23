@@ -58,7 +58,7 @@
                 <li class="mobile-nav__item">
                     <a class="<%= path === '/products' ? 'active' : '' %>" href="/products">Products</a>
                 </li>
-               <% if(!isAuthenticated) { %>
+               <% if(isAuthenticated) { %>
                 <li class="mobile-nav__item">
                     <a class="<%= path === '/cart' ? 'active' : '' %>" href="/cart">Cart</a>
                 </li>
