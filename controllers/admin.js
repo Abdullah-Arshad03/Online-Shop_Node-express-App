@@ -17,10 +17,31 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title;
-  const imageUrl = req.body.image;
+  const image = req.file;
   const price = req.body.price;
   const description = req.body.description;
   const errors = validationResult(req)
+  console.log('yeh image hy ',image)
+
+  if(!image){
+    return  res.status(422).render("admin/edit-product", {
+      pageTitle: "Add Product",
+      path: "/admin/add-product",
+      editing: false,
+      hasError : true,
+      product: {
+        title : title,
+        price : price,
+        description : description
+      },
+      errorMessage : 'Attached File is not image',
+      validationErrors : []
+
+    });
+  }
+
+
+  const imageUrl = image.path
 
 
   if(!errors.isEmpty()){
@@ -45,7 +66,6 @@ exports.postAddProduct = (req, res, next) => {
   }
 
   const product = new Product({
-    _id : new mongoose.Types.ObjectId('6558a8b489a8b427c60d9a3a'),
     title: title,
     price: price,
     description: description,

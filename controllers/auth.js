@@ -15,7 +15,6 @@ const transporter = nodemailer.createTransport(
 );
 
 exports.getLogin = (req, res, next) => {
-  // const isLoggedIn = req.get('Cookie').split('=')[1]
 
   let message = req.flash("error");
   if (message.length > 0) {

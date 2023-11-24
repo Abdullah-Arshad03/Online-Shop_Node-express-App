@@ -26,7 +26,7 @@ router.post(
       .isString()
       .isLength({ min: 3 })
       .trim(),
-    check("imageUrl", 'Enter Valid ImageUrl').isURL(),
+    check("imageUrl", 'Enter Valid ImageUrl'),
     check("price", 'Enter Valid Input for the price').isFloat(),
     check("description" , 'Enter atleast 15 and atmost 200 characters in Description').isLength({ min: 15, max: 200 }).trim(),
   ],
