@@ -34,10 +34,11 @@ form {
 .main-header {
   width: 100%;
   height: 3.5rem;
-  background-color: #313836;
+  background-color: #311432;
   padding: 0 1.5rem;
   display: flex;
   align-items: center;
+  font-weight: 500;
 }
 
 .main-header__nav {

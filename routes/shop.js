@@ -23,6 +23,8 @@ router.post('/create-order', isAuth , shopController.postOrder)
  
 router.post('/cart-delete-item' , isAuth ,shopController.postCartDeleteProduct)
 
+router.get('/orders/:orderId' , isAuth , shopController.getInvoices)
+
 router.get('/', shopController.getIndex);
 
 module.exports = router;
