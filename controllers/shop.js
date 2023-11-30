@@ -146,7 +146,9 @@ exports.getInvoices = (req, res , next) =>{
     if(err){
       next(err)
     }
-    res.send(data)
+    res.setHeader('Content-Type' , 'application/pdf')
+     res.setHeader('Content-Disposition' , 'attachment; filename = "' + invoiceName + '"')
+     res.send(data)
   })
 }
 

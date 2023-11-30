@@ -76,14 +76,12 @@ app.use((req, res, next) => {
   const user_id = req.session.user._id.toString();
   User.findById(user_id)
     .then((user) => {
-      // throw new Error('dummy error')
       // console.log('app mai session dekh raha houn', user_id)
       req.user = user;
       next();
     })
     .catch((err) => {
-      // console.log("this is the error", err);
-      next(new Error(err))
+      next(err)
     });
 });
 
@@ -104,7 +102,7 @@ app.use((error , req , res , next)=>{
   res.status(500).render('500',{
     pageTitle : 'Technical Eror',
     path : '/500',
-    // isAuthenticated : req.session.isLoggedIn
+    isAuthenticated : req.session.isLoggedIn
   })
 })
 mongoose

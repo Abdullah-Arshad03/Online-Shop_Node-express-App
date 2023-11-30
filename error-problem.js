@@ -14,7 +14,7 @@ try {
     console.log("This is the sum function you made n", sum( 3));
 }
 catch(error){
-    console.log('yahan tou error hy bhai apky sum function mai ')
+    // console.log('yahan tou error hy bhai apky sum function mai ')
 }
 
 try{
