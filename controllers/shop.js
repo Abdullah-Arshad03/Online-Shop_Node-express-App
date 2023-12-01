@@ -3,6 +3,7 @@ const Order = require('../models/order')
 const User = require('../models/user')
 const fs = require ('fs')
 const path = require('path')
+const PDFDocument = require('pdfkit')
 
 
 exports.getProducts = (req, res, next) => {
@@ -124,11 +125,9 @@ exports.postOrder = (req, res , next ) => {
     error.httpStatusCode = 500
     return next(error)
   });
-    
-
 }
 exports.getOrders = (req, res, next) => {
-  Order.find({ 'user.userId' : req.user._id}).then((orders)=>{
+  Order.find({ 'user.userId order' : req.user._id}).then((orders)=>{
     res.render("shop/orders", {
       path: "/orders",
       pageTitle: "Your Orders",
@@ -138,7 +137,6 @@ exports.getOrders = (req, res, next) => {
 };
 
 exports.getInvoices = (req, res , next) =>{
-
   const orderId = req.params.orderId
   const invoiceName = 'Invoice.pdf'
   console.log(invoiceName)
@@ -153,19 +151,14 @@ exports.getInvoices = (req, res , next) =>{
       return next (new Error('Unauthorized'))
     }
 
-    // fs.readFile(invoicePath , (err , data)=>{
-    //   if(err){
-    //     next(err)
-    //   }
-    //   res.setHeader('Content-Type' , 'application/pdf')
-    //    res.setHeader('Content-Disposition' , 'inline; filename = "' + invoiceName + '"')
-    //    res.send(data)
-    // })
-
-    const file = fs.createReadStream(invoicePath)
-    res.setHeader('Content-Type' , ' application/pdf')
-    res.setHeader('Content-Disposition' , 'inline; filename = "' + invoiceName + '"')
-    file.pipe(res)
+     const pdfkit = new PDFDocument()
+     res.setHeader('Content-Type' , ' application/pdf')
+     res.setHeader('Content-Disposition' , 'inline; filename = "' + invoiceName + '"')
+     const fileStream = fs.createWriteStream(invoicePath)
+     pdfkit.pipe(fileStream)
+    pdfkit.text('This is Abdullah!')
+    pdfkit.pipe(res)
+    pdfkit.end()
 
   }).catch((err)=>{
     return next(err)
