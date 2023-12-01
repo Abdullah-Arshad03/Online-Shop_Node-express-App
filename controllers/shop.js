@@ -4,6 +4,7 @@ const User = require('../models/user')
 const fs = require ('fs')
 const path = require('path')
 const PDFDocument = require('pdfkit')
+const rn  = require ('random-number')
 
 
 exports.getProducts = (req, res, next) => {
@@ -127,7 +128,8 @@ exports.postOrder = (req, res , next ) => {
   });
 }
 exports.getOrders = (req, res, next) => {
-  Order.find({ 'user.userId order' : req.user._id}).then((orders)=>{
+  Order.find({ 'user.userId' : req.user._id}).then((orders)=>{
+    console.log(orders)
     res.render("shop/orders", {
       path: "/orders",
       pageTitle: "Your Orders",
@@ -138,7 +140,8 @@ exports.getOrders = (req, res, next) => {
 
 exports.getInvoices = (req, res , next) =>{
   const orderId = req.params.orderId
-  const invoiceName = 'Invoice.pdf'
+  const random = rn()
+  const invoiceName = 'Invoice' + Math.random(random) + '.pdf'
   console.log(invoiceName)
   const invoicePath = path.join('data' , 'invoices' , invoiceName)
 
