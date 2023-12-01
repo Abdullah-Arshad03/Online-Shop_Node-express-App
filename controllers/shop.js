@@ -1,5 +1,6 @@
 const Product = require("../models/product");
 const Order = require('../models/order')
+const User = require('../models/user')
 const fs = require ('fs')
 const path = require('path')
 
@@ -100,7 +101,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
 exports.postOrder = (req, res , next ) => {
   req.user.populate('cart.items.productId')
   .then((product)=>{
-    console.log('get cart mai products hain ' , req.user.email)
+    console.log('order wali product ' , product.cart.items)
 
     let products = product.cart.items.map (i => {
       return { quantity : i.quantity , product : {...i.productId._doc}  }
@@ -114,6 +115,7 @@ exports.postOrder = (req, res , next ) => {
     })
     return order.save()
   }).then((result)=>{
+    console.log('yeh saved order', result)
     return req.user.clearCart()
   }).then(()=>{
     res.redirect('/orders')
@@ -142,14 +144,34 @@ exports.getInvoices = (req, res , next) =>{
   console.log(invoiceName)
   const invoicePath = path.join('data' , 'invoices' , invoiceName)
 
-  fs.readFile(invoicePath , (err , data)=>{
-    if(err){
-      next(err)
+  Order.findById(orderId).then((order)=>{
+    if(!order){
+      return next(new Error('Order isnt found'))
     }
-    res.setHeader('Content-Type' , 'application/pdf')
-     res.setHeader('Content-Disposition' , 'attachment; filename = "' + invoiceName + '"')
-     res.send(data)
+    if(order.user.userId.toString() !== req.user._id.toString())
+    {
+      return next (new Error('Unauthorized'))
+    }
+
+    // fs.readFile(invoicePath , (err , data)=>{
+    //   if(err){
+    //     next(err)
+    //   }
+    //   res.setHeader('Content-Type' , 'application/pdf')
+    //    res.setHeader('Content-Disposition' , 'inline; filename = "' + invoiceName + '"')
+    //    res.send(data)
+    // })
+
+    const file = fs.createReadStream(invoicePath)
+    res.setHeader('Content-Type' , ' application/pdf')
+    res.setHeader('Content-Disposition' , 'inline; filename = "' + invoiceName + '"')
+    file.pipe(res)
+
+  }).catch((err)=>{
+    return next(err)
   })
+  
+  
 }
 
 // exports.getCheckout = (req, res, next) => {

@@ -14,20 +14,6 @@ try {
     console.log("This is the sum function you made n", sum( 3));
 }
 catch(error){
-    // console.log('yahan tou error hy bhai apky sum function mai ')
+    console.log('yahan tou error hy bhai apky sum function mai ',error)
 }
 
-try{
-consol.log('it works fine ')
-
-}
-catch(error){
- console.log('bro e nhi dala ')
-}
-
-try{
-  console.logg('sdfk')
-}
-catch(error){
-  console.log('logg mia doo hain')
-}
