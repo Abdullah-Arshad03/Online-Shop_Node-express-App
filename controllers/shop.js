@@ -129,7 +129,6 @@ exports.postOrder = (req, res , next ) => {
 }
 exports.getOrders = (req, res, next) => {
   Order.find({ 'user.userId' : req.user._id}).then((orders)=>{
-    console.log(orders)
     res.render("shop/orders", {
       path: "/orders",
       pageTitle: "Your Orders",
@@ -142,7 +141,7 @@ exports.getInvoices = (req, res , next) =>{
   const orderId = req.params.orderId
   const random = rn()
   const invoiceName = 'Invoice' + Math.random(random) + '.pdf'
-  console.log(invoiceName)
+  // console.log(invoiceName)
   const invoicePath = path.join('data' , 'invoices' , invoiceName)
 
   Order.findById(orderId).then((order)=>{
@@ -153,15 +152,36 @@ exports.getInvoices = (req, res , next) =>{
     {
       return next (new Error('Unauthorized'))
     }
-
-     const pdfkit = new PDFDocument()
-     res.setHeader('Content-Type' , ' application/pdf')
-     res.setHeader('Content-Disposition' , 'inline; filename = "' + invoiceName + '"')
-     const fileStream = fs.createWriteStream(invoicePath)
-     pdfkit.pipe(fileStream)
-    pdfkit.text('This is Abdullah!')
+    const fileStream  = fs.createWriteStream(invoicePath)
+    const pdfkit = new PDFDocument()
+    res.setHeader('Content-Type' , 'application/pdf')
+    res.setHeader('Content-Disposition' , 'inline ; filename = "'+ invoiceName + '"')
+    pdfkit.pipe(fileStream)
+    pdfkit.fontSize(26).text('Invoice', {
+      underline : true
+    })
+    pdfkit.fontSize(14).text('----------------------------------------------------------------------')
+    let total_price = 0
+    order.Products.forEach(prod =>{
+      total_price = total_price + prod.quantity * prod.product.price
+        pdfkit.fontSize(14).text(prod.product.title + ' - ' + prod.quantity + ' x ' + prod.product.price + '$')
+    })
+    pdfkit.text('-------------------------------------------------')
+    pdfkit.fontSize(18).text('Total Price $ : '+ total_price )
     pdfkit.pipe(res)
     pdfkit.end()
+
+
+
+    // const pdfkit = new PDFDocument()
+     
+    // res.setHeader('Content-Type' , ' application/pdf')
+    // res.setHeader('Content-Disposition' , 'inline; filename = "' + invoiceName + '"')
+    // const fileStream = fs.createWriteStream(invoicePath)
+    // pdfkit.pipe(fileStream)
+    // pdfkit.text('This is Abdullah!')
+    // pdfkit.pipe(res)
+    // pdfkit.end()
 
   }).catch((err)=>{
     return next(err)

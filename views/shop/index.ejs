@@ -8,7 +8,7 @@
             <main>
                 <% if (prods.length > 0) { %>
                     <div class="grid">
-                        <% for (let product of prods) { %>
+                        <% prods.forEach(function(product) { %>
                             <article class="card product-item">
                                 <header class="card__header">
                                     <h1 class="product__title">
@@ -27,16 +27,16 @@
                                     </p>
                                 </div>
                                 <div class="card__actions">
-                                    <!-- <a href="/products/<%= product._id %>" class="btn">Details</a> -->
                                     <% if (isAuthenticated) { %>
-                                    <%- include('../includes/add-to-cart.ejs', {product: product}) %>
+                                        <%- include('../includes/add-to-cart.ejs', {product: product}) %>
                                     <% } %>
                                 </div>
                             </article>
-                            <% } %>
+                        <% }); %>
                     </div>
-                    <% } else { %>
-                        <h1>No Products Found!</h1>
-                        <% } %>
+                <% } else { %>
+                    <h1>No Products Found!</h1>
+                <% } %>
+                
             </main>
             <%- include('../includes/end.ejs') %>
